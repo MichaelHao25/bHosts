@@ -1,8 +1,10 @@
 import { Input, Tabs } from 'antd';
-import React, { ReactEventHandler, useEffect } from 'react';
 import { TabsProps } from 'antd/es/tabs';
-import styles from './index.module.scss';
+import React, { ReactEventHandler, useEffect } from 'react';
+import useAppDispatch from '../../hooks/useAppDispatch';
+import useAppSelector from '../../hooks/useAppSelector';
 import MonacoEditor, { getHosts } from './component/MonacoEditor';
+import PasswordModal from './component/PasswordModal';
 import {
   addListItems,
   IElementType,
@@ -12,9 +14,7 @@ import {
   setState,
   updateListItem,
 } from './hostsSlice';
-import { useAppSelector } from '../../hooks/useAppSelector';
-import { useAppDispatch } from '../../hooks/useAppDispatch';
-import PasswordModal from './component/PasswordModal';
+import styles from './index.module.scss';
 import useIpcEvent from './useIpcEvent';
 
 const EditKey = 'Input';
@@ -168,14 +168,12 @@ export default function () {
                 ),
                 children: null,
               };
-              break;
             }
             case IElementType.MonacoEditor: {
               return {
                 ...item,
                 children: null,
               };
-              break;
             }
           }
         })}

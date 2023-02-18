@@ -1,14 +1,15 @@
 import { ElectronChannel, WindowElectronApi } from './ipc';
-import { IAllAction } from './action';
+import { IAllAction } from './actions';
 
 type Func = (args: IAllAction) => void;
+
 declare global {
   interface IElectionApi {
     ipcRenderer: {
       /**
        * 向主线程发送消息
        * @param channel 线路
-       * @param args 参数
+       * @param action
        *
        */
       sendMessage(channel: ElectronChannel, action: IAllAction): void;
@@ -19,10 +20,7 @@ declare global {
        *
        * @return 取消监听的方法/监听失败
        */
-      on(
-        channel: ElectronChannel,
-        func: Func
-      ): () => undefined;
+      on(channel: ElectronChannel, func: Func): () => undefined;
       /**
        * 监听线路一次
        * @param channel 线路
@@ -30,11 +28,12 @@ declare global {
        *
        * @return boolean 监听成功/失败
        */
+
       once(channel: ElectronChannel, func: Func): void;
     };
   }
 
   interface Window {
-    [WindowElectronApi]: IElectionApi,
+    [WindowElectronApi]: IElectionApi;
   }
 }

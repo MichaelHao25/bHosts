@@ -47,5 +47,9 @@ export interface IGetUserName extends IAction {
   payload?: string;
 }
 
-
-export type IAllAction = ISetHostAction | IGetHostAction | IErrorMessage | ISuccessMessage | IGetUserName
+export type IAllAction =
+  | ISetHostAction
+  | IGetHostAction
+  | IErrorMessage
+  | ISuccessMessage
+  | IGetUserName;

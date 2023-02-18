@@ -1,5 +1,5 @@
-import { Input, message, Modal } from 'antd';
 import { EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
+import { Input, message, Modal } from 'antd';
 import React, { useState } from 'react';
 
 interface IProps {
@@ -25,8 +25,8 @@ export default React.memo((props: IProps) => {
       width={400}
       open={password === undefined}
       title={`Please enter user(${user}) password`}
-      okText='ok'
-      cancelText='cancel'
+      okText="ok"
+      cancelText="cancel"
       onCancel={() => {
         message.error('Please enter password');
       }}

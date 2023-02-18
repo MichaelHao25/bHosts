@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
+import { IUserEventType } from '../../public/actions/IUserEventType';
 import { ElectronChannel } from '../../public/ipc';
-import { IUserEventType } from '../../public/action';
 
 export default (): string => {
   const [user, setUser] = useState<string>('');
   useEffect(() => {
     window.electron.ipcRenderer.once(ElectronChannel.UserEvent, (data) => {
       const { type, payload } = data;
-      if (type === IUserEventType.getUserName) {
+      if (type === IUserEventType.getUserNameRequest) {
         if (payload) {
           setUser(payload);
         } else {
@@ -16,8 +16,8 @@ export default (): string => {
       }
     });
     window.electron.ipcRenderer.sendMessage(ElectronChannel.UserEvent, {
-      type: IUserEventType.getUserName
+      type: IUserEventType.getUserNameRequest,
     });
   }, []);
   return user;
-}
+};

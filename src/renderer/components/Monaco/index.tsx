@@ -9,7 +9,7 @@ interface IProps {
   handleSave?: (value: string) => void;
 }
 
-export default function(props: IProps) {
+export default function (props: IProps) {
   const { value = 'loading', handleSave } = props;
   const divRef = useRef<HTMLDivElement>(null);
   const monacoRef = useRef<monaco.editor.IStandaloneCodeEditor>();
@@ -17,21 +17,21 @@ export default function(props: IProps) {
     if (divRef.current) {
       monacoRef.current = monaco.editor.create(divRef.current, {
         minimap: {
-          enabled: false
+          enabled: false,
         },
         value,
         language: 'shell',
         automaticLayout: true,
         contextmenu: false,
         /** 控制滚动到最后一行然后下面是否有空白行 */
-        scrollBeyondLastLine: false
+        scrollBeyondLastLine: false,
       });
       monaco.editor.addKeybindingRules([
         {
           // disable show command center
           keybinding: monaco.KeyCode.F1,
-          command: null
-        }
+          command: null,
+        },
       ]);
       monacoRef.current.addCommand(
         /** command */
@@ -49,7 +49,7 @@ export default function(props: IProps) {
         monacoRef.current.dispose();
       }
     };
-  }, []);
+  }, [handleSave, value]);
   // useEffect(() => {
   //   value && monacoRef.current && monacoRef.current.setValue(value);
   // }, [value]);

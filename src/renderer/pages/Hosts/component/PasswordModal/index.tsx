@@ -1,11 +1,11 @@
-import { Input, InputRef, message, Modal } from 'antd';
 import { EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
+import { Input, InputRef, message, Modal } from 'antd';
 import React, { useEffect, useRef } from 'react';
-import { useAppSelector } from '../../../../hooks/useAppSelector';
-import { useAppDispatch } from '../../../../hooks/useAppDispatch';
-import { setState } from '../../hostsSlice';
-import { ElectronChannel } from '../../../../../public/ipc';
 import { IHostsEventType } from '../../../../../public/action';
+import { ElectronChannel } from '../../../../../public/ipc';
+import useAppDispatch from '../../../../hooks/useAppDispatch';
+import useAppSelector from '../../../../hooks/useAppSelector';
+import { setState } from '../../hostsSlice';
 
 export default React.memo(() => {
   const password = useAppSelector((state) => state.hosts.password);
