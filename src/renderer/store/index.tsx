@@ -1,6 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit';
 import logger from 'redux-logger';
-import hostsSlice from '../pages/Hosts/hostsSlice';
 import singleSlice from '../pages/SingleHost/singleSlice';
 import { IRootState } from './IRootState';
 
@@ -29,7 +28,7 @@ function loadFromLocalStorage() {
 
 export const store = configureStore({
   reducer: {
-    hosts: hostsSlice,
+    // hosts: hostsSlice,
     single: singleSlice,
   },
   preloadedState: loadFromLocalStorage(),
@@ -39,4 +38,3 @@ export const store = configureStore({
 store.subscribe(() => {
   saveToLocalStorage(store.getState());
 });
-

@@ -1,26 +1,24 @@
 import { IHostsEventAction, IHostsEventType } from './IHostsEventType';
 import { IUserEventAction, IUserEventType } from './IUserEventType';
 
-export interface IAction {
-  type: IHostsEventType | IUserEventType;
-  payload?: Record<string, any> | string | number;
-}
-
 export enum IResponseStatus {
   Error,
   Success,
 }
 
-export interface IResponseSuccess<T> {
+export interface IResponseSuccess<T = any> {
   status: IResponseStatus.Success;
   data: T;
 }
 
-export interface IResponseError<T> {
+export interface IResponseError {
   status: IResponseStatus.Error;
-  data: T;
+  message: string;
 }
 
-export type IResponse<T> = IResponseSuccess<T> | IResponseError<T>;
+export interface IAction {
+  type: IHostsEventType | IUserEventType;
+  payload?: any;
+}
 
 export type IAllAction = IUserEventAction | IHostsEventAction;

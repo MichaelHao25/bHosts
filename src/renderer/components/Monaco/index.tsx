@@ -1,7 +1,7 @@
 import * as monaco from 'monaco-editor';
 import { useEffect, useRef } from 'react';
 
-interface IProps {
+export interface IMonacoProps {
   /**
    * 传入的值
    */
@@ -9,7 +9,7 @@ interface IProps {
   handleSave?: (value: string) => void;
 }
 
-export default function (props: IProps) {
+export default function (props: IMonacoProps) {
   const { value = 'loading', handleSave } = props;
   const divRef = useRef<HTMLDivElement>(null);
   const monacoRef = useRef<monaco.editor.IStandaloneCodeEditor>();
@@ -19,7 +19,7 @@ export default function (props: IProps) {
         minimap: {
           enabled: false,
         },
-        value,
+        value: 'loading...',
         language: 'shell',
         automaticLayout: true,
         contextmenu: false,
@@ -49,9 +49,15 @@ export default function (props: IProps) {
         monacoRef.current.dispose();
       }
     };
-  }, [handleSave, value]);
-  // useEffect(() => {
-  //   value && monacoRef.current && monacoRef.current.setValue(value);
-  // }, [value]);
+  }, [handleSave]);
+  useEffect(() => {
+    if (value && monacoRef.current) {
+      const position = monacoRef.current.getPosition();
+      monacoRef.current.setValue(value);
+      if (position) {
+        monacoRef.current.setPosition(position);
+      }
+    }
+  }, [value]);
   return <div style={{ width: '100%', height: '100%' }} ref={divRef} />;
 }

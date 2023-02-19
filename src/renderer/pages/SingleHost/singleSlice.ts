@@ -40,14 +40,11 @@ const singleSlice = createSlice({
       if (hostContent) {
         state.hostContent = hostContent;
       }
-    }
-  }
+    },
+  },
 });
 
-export const {
-  setSinglePassword,
-  setSingleHostContent
-} = singleSlice.actions;
+export const { setSinglePassword, setSingleHostContent } = singleSlice.actions;
 export const singleSlicePassword = (state: IRootState) => state.single.password;
 export const singleSliceHostContent = (state: IRootState) =>
   state.single.hostContent;

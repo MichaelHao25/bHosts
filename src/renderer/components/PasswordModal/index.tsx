@@ -1,14 +1,15 @@
 import { EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
 import { Input, message, Modal } from 'antd';
 import React, { useState } from 'react';
+import { PasswordProps } from 'antd/es/input/Password';
 
-interface IProps {
+interface IPasswordModalProps {
   password?: string;
   user?: string;
   handlePasswordCallback?: (password: string) => void;
 }
 
-export default React.memo((props: IProps) => {
+export default React.memo((props: IPasswordModalProps) => {
   const { password, user, handlePasswordCallback } = props;
   const [inputPassword, setInputPassword] = useState<string>('');
 
@@ -19,6 +20,11 @@ export default React.memo((props: IProps) => {
     if (handlePasswordCallback) {
       handlePasswordCallback(inputPassword);
     }
+  };
+  const iconRender: Required<PasswordProps>['iconRender'] = (visible) =>
+    visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />;
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputPassword(e.target.value);
   };
   return (
     <Modal
@@ -34,11 +40,9 @@ export default React.memo((props: IProps) => {
     >
       <Input.Password
         value={inputPassword}
-        onChange={(e) => setInputPassword(e.target.value)}
+        onChange={onChange}
         onPressEnter={handleOnOk}
-        iconRender={(visible) =>
-          visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
-        }
+        iconRender={iconRender}
       />
     </Modal>
   );

@@ -18,28 +18,28 @@ export interface ISetHostProps {
   password: string;
 }
 
-export interface ISetHostRequestAction extends IAction {
+export interface IHostsEventSetHostRequestAction extends IAction {
   type: IHostsEventType.setHostRequest;
   payload: ISetHostProps;
 }
 
-export interface ISetHostResponseAction extends IAction {
+export interface IHostEventSetHostResponseAction extends IAction {
   type: IHostsEventType.setHostResponse;
-  payload: IResponseSuccess<string> | IResponseError<string>;
+  payload: IResponseSuccess<string> | IResponseError;
 }
 
-export interface IGetHostRequestAction extends IAction {
+export interface IHostEventGetHostRequestAction extends IAction {
   type: IHostsEventType.getHostRequest;
   payload?: string;
 }
 
-export interface IGetHostResponseAction extends IAction {
+export interface IHostEventGetHostResponseAction extends IAction {
   type: IHostsEventType.getHostResponse;
-  payload: IResponseSuccess<string> | IResponseError<string>;
+  payload: IResponseSuccess<string> | IResponseError;
 }
 
 export type IHostsEventAction =
-  | IGetHostResponseAction
-  | IGetHostRequestAction
-  | ISetHostResponseAction
-  | ISetHostRequestAction;
+  | IHostEventGetHostResponseAction
+  | IHostEventGetHostRequestAction
+  | IHostEventSetHostResponseAction
+  | IHostsEventSetHostRequestAction;

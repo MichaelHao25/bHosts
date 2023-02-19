@@ -1,7 +1,8 @@
-import { IAction } from './index';
+import { IAction, IResponseError, IResponseSuccess } from './index';
 
 export enum IUserEventType {
   getUserNameRequest = 'getUserNameRequest',
+  getUserNameResponse = 'getUserNameResponse',
 }
 
 export interface IUserEventGetUserNameRequestAction extends IAction {
@@ -9,4 +10,11 @@ export interface IUserEventGetUserNameRequestAction extends IAction {
   payload?: string;
 }
 
-export type IUserEventAction = IUserEventGetUserNameRequestAction;
+export interface IUserEventGetUserNameResponseAction extends IAction {
+  type: IUserEventType.getUserNameResponse;
+  payload?: IResponseSuccess<string> | IResponseError;
+}
+
+export type IUserEventAction =
+  | IUserEventGetUserNameRequestAction
+  | IUserEventGetUserNameResponseAction;

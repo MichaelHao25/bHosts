@@ -1,12 +1,14 @@
 import { ipcMain } from 'electron';
 import { IAllAction, IResponseStatus } from '../../public/actions';
 import {
-  IGetHostResponseAction,
+  IHostEventGetHostResponseAction,
+  IHostEventSetHostResponseAction,
   IHostsEventType,
-  ISetHostResponseAction,
 } from '../../public/actions/IHostsEventType';
-import IUserEventType, {
+import {
   IUserEventAction,
+  IUserEventGetUserNameResponseAction,
+  IUserEventType,
 } from '../../public/actions/IUserEventType';
 import { ElectronChannel } from '../../public/ipc';
 import { getUserInfo } from '../util';
@@ -20,7 +22,7 @@ ipcMain.on(ElectronChannel.HostEvent, async (event, action: IAllAction) => {
       const { password, host } = payload;
       setHost({ password, host })
         .then(() => {
-          const action: ISetHostResponseAction = {
+          const action: IHostEventSetHostResponseAction = {
             type: IHostsEventType.setHostResponse,
             payload: {
               status: IResponseStatus.Success,
@@ -30,11 +32,11 @@ ipcMain.on(ElectronChannel.HostEvent, async (event, action: IAllAction) => {
           event.reply(ElectronChannel.HostEvent, action);
         })
         .catch((error) => {
-          const action: ISetHostResponseAction = {
+          const action: IHostEventSetHostResponseAction = {
             type: IHostsEventType.setHostResponse,
             payload: {
               status: IResponseStatus.Error,
-              data: error.message,
+              message: error.message,
             },
           };
           event.reply(ElectronChannel.HostEvent, action);
@@ -43,7 +45,7 @@ ipcMain.on(ElectronChannel.HostEvent, async (event, action: IAllAction) => {
     }
     case IHostsEventType.getHostRequest: {
       getHost().then((host) => {
-        const action: IGetHostResponseAction<string> = {
+        const action: IHostEventGetHostResponseAction = {
           type: IHostsEventType.getHostResponse,
           payload: {
             status: IResponseStatus.Success,
@@ -63,10 +65,27 @@ ipcMain.on(
     const { type } = action;
     switch (type) {
       case IUserEventType.getUserNameRequest: {
-        event.reply(ElectronChannel.UserEvent, {
-          type: IUserEventType.getUserNameRequest,
-          payload: getUserInfo().username,
-        });
+        const { username } = getUserInfo();
+        if (username) {
+          const action: IUserEventGetUserNameResponseAction = {
+            type: IUserEventType.getUserNameResponse,
+            payload: {
+              status: IResponseStatus.Success,
+              data: username,
+            },
+          };
+          event.reply(ElectronChannel.UserEvent, action);
+        } else {
+          const action: IUserEventGetUserNameResponseAction = {
+            type: IUserEventType.getUserNameResponse,
+            payload: {
+              status: IResponseStatus.Error,
+              message: 'username is null',
+            },
+          };
+
+          event.reply(ElectronChannel.UserEvent, action);
+        }
         break;
       }
       default: {
