@@ -26,17 +26,18 @@ ipcMain.on(ElectronChannel.HostEvent, async (event, action: IAllAction) => {
             type: IHostsEventType.setHostResponse,
             payload: {
               status: IResponseStatus.Success,
-              data: 'host update success!',
+              data: 'host更新成功!',
             },
           };
-          event.reply(ElectronChannel.HostEvent, action);
+
+          return event.reply(ElectronChannel.HostEvent, action);
         })
         .catch((error) => {
           const action: IHostEventSetHostResponseAction = {
             type: IHostsEventType.setHostResponse,
             payload: {
               status: IResponseStatus.Error,
-              message: error.message,
+              message: error?.message,
             },
           };
           event.reply(ElectronChannel.HostEvent, action);
@@ -44,17 +45,31 @@ ipcMain.on(ElectronChannel.HostEvent, async (event, action: IAllAction) => {
       break;
     }
     case IHostsEventType.getHostRequest: {
-      getHost().then((host) => {
-        const action: IHostEventGetHostResponseAction = {
-          type: IHostsEventType.getHostResponse,
-          payload: {
-            status: IResponseStatus.Success,
-            data: host,
-          },
-        };
-        event.reply(ElectronChannel.HostEvent, action);
-      });
+      getHost()
+        .then((host) => {
+          const action: IHostEventGetHostResponseAction = {
+            type: IHostsEventType.getHostResponse,
+            payload: {
+              status: IResponseStatus.Success,
+              data: host,
+            },
+          };
+          return event.reply(ElectronChannel.HostEvent, action);
+        })
+        .catch((e) => {
+          const action: IHostEventGetHostResponseAction = {
+            type: IHostsEventType.getHostResponse,
+            payload: {
+              status: IResponseStatus.Error,
+              message: e.message,
+            },
+          };
+          event.reply(ElectronChannel.HostEvent, action);
+        });
       break;
+    }
+    default: {
+      console.log('ElectronChannel.HostEvent default');
     }
   }
 });

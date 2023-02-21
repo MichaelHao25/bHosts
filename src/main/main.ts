@@ -15,6 +15,7 @@ import log from 'electron-log';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
 import './ipcEventListener/hostEvent';
+import { isDebug } from '../public/isDebug';
 
 class AppUpdater {
   constructor() {
@@ -36,9 +37,6 @@ if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
   sourceMapSupport.install();
 }
-
-const isDebug =
-  process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true';
 
 if (isDebug) {
   require('electron-debug')();
@@ -80,8 +78,8 @@ const createWindow = async () => {
     webPreferences: {
       preload: app.isPackaged
         ? path.join(__dirname, 'preload.js')
-        : path.join(__dirname, '../../.erb/dll/preload.js')
-    }
+        : path.join(__dirname, '../../.erb/dll/preload.js'),
+    },
   });
 
   mainWindow.loadURL(resolveHtmlPath('index.html'));

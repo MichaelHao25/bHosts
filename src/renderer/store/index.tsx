@@ -2,6 +2,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import logger from 'redux-logger';
 import singleSlice from '../pages/SingleHost/singleSlice';
 import { IRootState } from './IRootState';
+import { isDebug } from '../../public/isDebug';
 
 // convert object to string and store in localStorage
 function saveToLocalStorage(state: IRootState) {
@@ -32,7 +33,7 @@ export const store = configureStore({
     single: singleSlice,
   },
   preloadedState: loadFromLocalStorage(),
-  middleware: [logger],
+  middleware: isDebug ? [logger] : [],
 });
 
 store.subscribe(() => {

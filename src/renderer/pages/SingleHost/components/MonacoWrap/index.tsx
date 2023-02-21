@@ -1,46 +1,86 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect } from 'react';
 import { message } from 'antd';
 import Monaco, { IMonacoProps } from '../../../../components/Monaco';
-import { ElectronChannel } from '../../../../../public/ipc';
-import { IUserEventType } from '../../../../../public/actions/IUserEventType';
-import { IResponseStatus } from '../../../../../public/actions';
 import {
-  IHostsEventSetHostRequestAction,
-  IHostsEventType,
-} from '../../../../../public/actions/IHostsEventType';
+  setSingleHostContent,
+  singleSliceHostContent,
+  singleSlicePassword,
+} from '../../singleSlice';
+import useAppSelector from '../../../../hooks/useAppSelector';
+import useAppDispatch from '../../../../hooks/useAppDispatch';
+import { IResponseStatus } from '../../../../../public/actions';
+import getHost from './getHost';
+import { saveHost } from './saveHost';
 
-const setHost = () => {
-  window.electron.ipcRenderer.once(ElectronChannel.HostEvent, (data) => {
-    console.log('useGetUser', data);
-    const { type, payload } = data;
-    if (type === IUserEventType.getUserNameResponse) {
-      if (payload) {
-        const { status } = payload;
-        if (status === IResponseStatus.Success) {
-          setUser(payload.data);
-        } else {
-          message.error(payload.message);
-        }
-      }
-    }
-  });
-  const action: IHostsEventSetHostRequestAction = {
-    type: IHostsEventType.setHostRequest,
-    payload: {
-      host: '',
-      password: '',
-    },
-  };
-  window.electron.ipcRenderer.sendMessage(ElectronChannel.HostEvent, action);
-};
 export default function () {
-  const [value, setValue] =
-    useState<Required<IMonacoProps>['value']>('loading...');
-  const handleSave = useCallback<Required<IMonacoProps>['handleSave']>(
-    (handleValue) => {
-      setValue(`${handleValue}`);
+  const [messageApi, contextHolder] = message.useMessage();
+  const password = useAppSelector(singleSlicePassword);
+  const hostContent = useAppSelector(singleSliceHostContent);
+  const dispatch = useAppDispatch();
+  const key = 'updatable';
+  useEffect(() => {
+    getHost()
+      .then((payload) => {
+        const { status } = payload;
+        if (IResponseStatus.Success === status) {
+          const { data } = payload;
+          dispatch(setSingleHostContent({ hostContent: data }));
+        } else {
+          throw new Error(payload.message);
+        }
+        return '';
+      })
+      .catch((e) => {
+        message.error(e.message || '获取host失败');
+      });
+  }, [dispatch]);
+
+  const handleSave = useCallback<Required<IMonacoProps>['onSave']>(
+    (value) => {
+      if (password) {
+        messageApi.open({
+          key,
+          type: 'loading',
+          content: 'loading...',
+          duration: 0,
+        });
+        saveHost({ password, host: value })
+          .then((payload) => {
+            const { status } = payload;
+            if (IResponseStatus.Success === status) {
+              messageApi.open({
+                key,
+                type: 'success',
+                content: '保存成功!',
+                duration: 2,
+              });
+            } else {
+              throw new Error(payload.message);
+            }
+            return '';
+          })
+          .catch((e) => {
+            messageApi.open({
+              key,
+              type: 'success',
+              content: e.message || '设置host失败',
+              duration: 2,
+            });
+          });
+      }
     },
-    []
+    [password]
   );
-  return <Monaco value={value} handleSave={handleSave} />;
+  // const onChange = useCallback<Required<IMonacoProps>['onChange']>(
+  //   (value) => {
+  //     dispatch(setSingleHostContent({ hostContent: value }));
+  //   },
+  //   [dispatch]
+  // );
+  return (
+    <>
+      {contextHolder}
+      <Monaco value={hostContent} onSave={handleSave} />
+    </>
+  );
 }

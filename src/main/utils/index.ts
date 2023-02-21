@@ -1,7 +1,7 @@
 import { readFile, writeFile } from 'fs/promises';
 import child_process from 'child_process';
 import { getPlatform } from '../util';
-import { ISetHostProps } from '../../public/actions';
+import { ISetHostProps } from '../../public/actions/IHostsEventType';
 
 const platform = getPlatform();
 
@@ -45,11 +45,9 @@ export const setHost = (props: ISetHostProps): Promise<any> => {
     url: HostsUrl,
   })
     .then((res) => {
-      console.log('res', res);
       return writeFile(HostsUrl, host);
     })
-    .then((res) => {
-      console.log(res);
+    .then(() => {
       return updateChmodPromiseCode({
         password,
         promiseCode: 644,

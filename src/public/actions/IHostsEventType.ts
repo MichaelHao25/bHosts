@@ -30,7 +30,6 @@ export interface IHostEventSetHostResponseAction extends IAction {
 
 export interface IHostEventGetHostRequestAction extends IAction {
   type: IHostsEventType.getHostRequest;
-  payload?: string;
 }
 
 export interface IHostEventGetHostResponseAction extends IAction {

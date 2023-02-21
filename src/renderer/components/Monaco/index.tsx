@@ -1,16 +1,17 @@
 import * as monaco from 'monaco-editor';
-import { useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 
 export interface IMonacoProps {
   /**
    * 传入的值
    */
   value?: string;
-  handleSave?: (value: string) => void;
+  onSave?: (value: string) => void;
+  onChange?: (value: string) => void;
 }
 
-export default function (props: IMonacoProps) {
-  const { value = 'loading', handleSave } = props;
+export default React.memo(function (props: IMonacoProps) {
+  const { value, onSave, onChange } = props;
   const divRef = useRef<HTMLDivElement>(null);
   const monacoRef = useRef<monaco.editor.IStandaloneCodeEditor>();
   useEffect(() => {
@@ -33,23 +34,33 @@ export default function (props: IMonacoProps) {
           command: null,
         },
       ]);
-      monacoRef.current.addCommand(
-        /** command */
-        monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS,
-        () => {
-          if (monacoRef.current && handleSave) {
-            const monacoValue = monacoRef.current.getValue();
-            handleSave(monacoValue);
-          }
-        }
-      );
     }
     return () => {
       if (monacoRef.current) {
         monacoRef.current.dispose();
       }
     };
-  }, [handleSave]);
+  }, []);
+  useEffect(() => {
+    monacoRef.current?.onDidChangeModelContent(() => {
+      if (monacoRef.current && onChange) {
+        const monacoValue = monacoRef.current.getValue();
+        onChange(monacoValue);
+      }
+    });
+  }, [onChange]);
+  useEffect(() => {
+    monacoRef.current?.addCommand(
+      /** command */
+      monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS,
+      () => {
+        if (monacoRef.current && onSave) {
+          const monacoValue = monacoRef.current.getValue();
+          onSave(monacoValue);
+        }
+      }
+    );
+  }, [onSave]);
   useEffect(() => {
     if (value && monacoRef.current) {
       const position = monacoRef.current.getPosition();
@@ -60,4 +71,4 @@ export default function (props: IMonacoProps) {
     }
   }, [value]);
   return <div style={{ width: '100%', height: '100%' }} ref={divRef} />;
-}
+});
